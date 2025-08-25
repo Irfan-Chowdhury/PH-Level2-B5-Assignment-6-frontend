@@ -28,14 +28,11 @@ const navigationLinks = [
   { href: "/about", label: "About", role: "PUBLIC" },
   { href: "/features", label: "Features", role: "PUBLIC" },
   { href: "/prices", label: "Prices", role: "PUBLIC" },
-    
-  { href: "/contact", label: "contact", role: "PUBLIC" },
+  { href: "/contact", label: "Contact", role: "PUBLIC" },
   { href: "/faq", label: "FAQ", role: "PUBLIC" },
-  
-    { href: "/tours", label: "Tours", role: "PUBLIC" },
 
 
-
+  { href: "/tours", label: "Tours", role: "PUBLIC" },
   { href: "/admin", label: "Dashboard", role: role.admin },
   { href: "/admin", label: "Dashboard", role: role.superAdmin },
   { href: "/user", label: "Dashboard", role: role.user },

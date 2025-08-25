@@ -21,6 +21,7 @@ import Fail from "@/pages/Payment/Fail";
 import Features from "@/pages/Features";
 import Pricing from "@/pages/Pricing";
 import Contact from "@/pages/Contact";
+import FAQ from "@/pages/FAQ";
 
 export const router = createBrowserRouter([
   {
@@ -46,6 +47,10 @@ export const router = createBrowserRouter([
       {
         Component: Contact,
         path: "contact",
+      },
+      {
+        Component: FAQ,
+        path: "faq",
       },
       {
         Component: Tours,
