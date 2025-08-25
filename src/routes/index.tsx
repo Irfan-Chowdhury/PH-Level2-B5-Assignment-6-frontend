@@ -22,6 +22,13 @@ import Features from "@/pages/Features";
 import Pricing from "@/pages/Pricing";
 import Contact from "@/pages/Contact";
 import FAQ from "@/pages/FAQ";
+import UserLayout from "@/components/layout/UserLayout";
+import UserOverview from "@/pages/Dashboard/User/UserOverview";
+import DepositMoney from "@/pages/Dashboard/User/DepositMoney";
+import WithdrawMoney from "@/pages/Dashboard/User/WithdrawMoney";
+import SendMoney from "@/pages/Dashboard/User/SendMoney";
+import TransactionHistory from "@/pages/Dashboard/User/TransactionHistory";
+import Profile from "@/pages/Dashboard/User/Profile";
 
 export const router = createBrowserRouter([
   {
@@ -67,19 +74,60 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    Component: withAuth(DashboardLayout, role.superAdmin as TRole),
+    // Component: withAuth(DashboardLayout, role.superAdmin as TRole),
+    Component: DashboardLayout,
     path: "/admin",
     children: [
-      { index: true, element: <Navigate to="/admin/analytics" /> },
+      { 
+        index: true, 
+        element: <Navigate to="/admin/analytics" /> 
+      },
       ...generateRoutes(adminSidebarItems),
     ],
   },
+  // {
+  //   Component: withAuth(DashboardLayout, role.user as TRole),
+  //   path: "/user",
+  //   children: [
+  //     { 
+  //       index: true, 
+  //       element: <Navigate to="/user/bookings" /> 
+  //     },
+  //     ...generateRoutes(userSidebarItems),
+  //   ],
+  // },
   {
-    Component: withAuth(DashboardLayout, role.user as TRole),
+    Component: UserLayout,
     path: "/user",
     children: [
-      { index: true, element: <Navigate to="/user/bookings" /> },
-      ...generateRoutes(userSidebarItems),
+      // { 
+      //   index: true, 
+      //   element: <Navigate to="/user/bookings" /> 
+      // },
+      {
+        Component: UserOverview,
+        path: "dashboard",
+      },
+      {
+        Component: DepositMoney,
+        path: "deposit-money",
+      },
+      {
+        Component: WithdrawMoney,
+        path: "withdraw-money",
+      },
+      {
+        Component: SendMoney,
+        path: "send-money",
+      },
+      {
+        Component: TransactionHistory,
+        path: "transaction-history",
+      },
+      {
+        Component: Profile,
+        path: "profile",
+      },
     ],
   },
   {
