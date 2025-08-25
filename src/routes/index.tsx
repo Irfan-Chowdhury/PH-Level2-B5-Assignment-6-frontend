@@ -29,6 +29,11 @@ import WithdrawMoney from "@/pages/Dashboard/User/WithdrawMoney";
 import SendMoney from "@/pages/Dashboard/User/SendMoney";
 import TransactionHistory from "@/pages/Dashboard/User/TransactionHistory";
 import Profile from "@/pages/Dashboard/User/Profile";
+import AgentOverview from "@/pages/Dashboard/Agent/AgentOverview";
+import AgentLayout from "@/components/layout/AgentLayout";
+import AgentAddMoney from "@/pages/Dashboard/Agent/AgentAddMoney";
+import AgentWithdrawMoney from "@/pages/Dashboard/Agent/AgentWithdrawMoney";
+import AgentTransactions from "@/pages/Dashboard/Agent/AgentTransactions";
 
 export const router = createBrowserRouter([
   {
@@ -124,6 +129,44 @@ export const router = createBrowserRouter([
         Component: TransactionHistory,
         path: "transaction-history",
       },
+      {
+        Component: Profile,
+        path: "profile",
+      },
+    ],
+  },
+    {
+    Component: AgentLayout,
+    path: "/agent",
+    children: [
+      {
+        Component: AgentOverview,
+        path: "dashboard",
+      },
+      {
+        Component: AgentAddMoney,
+        path: "add-money",
+      },
+      {
+        Component: AgentWithdrawMoney,
+        path: "withdraw-money",
+      },
+      {
+        Component: AgentTransactions,
+        path: "transaction-history",
+      },
+      // {
+      //   Component: WithdrawMoney,
+      //   path: "withdraw-money",
+      // },
+      // {
+      //   Component: SendMoney,
+      //   path: "send-money",
+      // },
+      // {
+      //   Component: TransactionHistory,
+      //   path: "transaction-history",
+      // },
       {
         Component: Profile,
         path: "profile",
