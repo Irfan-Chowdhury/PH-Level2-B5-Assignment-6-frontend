@@ -26,10 +26,23 @@ import React from "react";
 const navigationLinks = [
   { href: "/", label: "Home", role: "PUBLIC" },
   { href: "/about", label: "About", role: "PUBLIC" },
-  { href: "/tours", label: "Tours", role: "PUBLIC" },
+  { href: "/features", label: "Features", role: "PUBLIC" },
+    { href: "/tours", label: "Tours", role: "PUBLIC" },
+
+  { href: "/contact", label: "Contact", role: "PUBLIC" },
+  { href: "/faq", label: "FAQ", role: "PUBLIC" },
+
+
   { href: "/admin", label: "Dashboard", role: role.admin },
   { href: "/admin", label: "Dashboard", role: role.superAdmin },
   { href: "/user", label: "Dashboard", role: role.user },
+
+
+            //   <li><Link to="/" className="hover:text-indigo-600 transition">Home</Link></li>
+            // <li><Link to="/about" className="hover:text-indigo-600 transition">About</Link></li>
+            // <li><Link to="/features" className="hover:text-indigo-600 transition">Features</Link></li>
+            // <li><Link to="/contact" className="hover:text-indigo-600 transition">Contact</Link></li>
+            // <li><Link to="/faq" className="hover:text-indigo-600 transition">FAQ</Link></li>
 ];
 
 export default function Navbar() {

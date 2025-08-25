@@ -18,6 +18,7 @@ import Booking from "@/pages/Booking";
 import Homepage from "@/pages/Homepage";
 import Success from "@/pages/Payment/Success";
 import Fail from "@/pages/Payment/Fail";
+import Features from "@/pages/Features";
 
 export const router = createBrowserRouter([
   {
@@ -31,6 +32,10 @@ export const router = createBrowserRouter([
       {
         Component: About,
         path: "about",
+      },
+      {
+        Component: Features,
+        path: "features",
       },
       {
         Component: Tours,
