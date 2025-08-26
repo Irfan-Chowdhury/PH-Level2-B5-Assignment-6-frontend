@@ -34,6 +34,15 @@ import AgentLayout from "@/components/layout/AgentLayout";
 import AgentAddMoney from "@/pages/Dashboard/Agent/AgentAddMoney";
 import AgentWithdrawMoney from "@/pages/Dashboard/Agent/AgentWithdrawMoney";
 import AgentTransactions from "@/pages/Dashboard/Agent/AgentTransactions";
+import AdminOverview from "@/pages/Dashboard/Admin/AdminOverview";
+import AdminLayout from "@/components/layout/AdminLayout";
+import AdminManageUsers from "@/pages/Dashboard/Admin/AdminManageUsers";
+import AdminManageAgents from "@/pages/Dashboard/Admin/AdminManageAgents";
+import AdminTransactions from "@/pages/Dashboard/Admin/AdminTransactions";
+import ListingPage from "@/pages/Dashboard/Admin/ListingPage";
+import AdminProfile from "@/pages/Dashboard/Admin/Profile";
+import UserProfile from "@/pages/Dashboard/User/Profile";
+import AgentProfile from "@/pages/Dashboard/Agent/Profile";
 
 export const router = createBrowserRouter([
   {
@@ -78,18 +87,18 @@ export const router = createBrowserRouter([
       },
     ],
   },
-  {
-    // Component: withAuth(DashboardLayout, role.superAdmin as TRole),
-    Component: DashboardLayout,
-    path: "/admin",
-    children: [
-      { 
-        index: true, 
-        element: <Navigate to="/admin/analytics" /> 
-      },
-      ...generateRoutes(adminSidebarItems),
-    ],
-  },
+  // {
+  //   // Component: withAuth(DashboardLayout, role.superAdmin as TRole),
+  //   Component: DashboardLayout,
+  //   path: "/admin",
+  //   children: [
+  //     { 
+  //       index: true, 
+  //       element: <Navigate to="/admin/analytics" /> 
+  //     },
+  //     ...generateRoutes(adminSidebarItems),
+  //   ],
+  // },
   // {
   //   Component: withAuth(DashboardLayout, role.user as TRole),
   //   path: "/user",
@@ -101,6 +110,36 @@ export const router = createBrowserRouter([
   //     ...generateRoutes(userSidebarItems),
   //   ],
   // },
+  {
+    Component: AdminLayout,
+    path: "/admin",
+    children: [
+      {
+        Component: AdminOverview,
+        path: "dashboard",
+      },
+      {
+        Component: AdminManageUsers,
+        path: "manage-users",
+      },
+      {
+        Component: AdminManageAgents,
+        path: "manage-agents",
+      },
+      {
+        Component: AdminTransactions,
+        path: "transactions",
+      },
+      {
+        Component: ListingPage,
+        path: "listing",
+      },
+      {
+        Component: AdminProfile,
+        path: "profile",
+      },
+    ],
+  },
   {
     Component: UserLayout,
     path: "/user",
@@ -130,7 +169,7 @@ export const router = createBrowserRouter([
         path: "transaction-history",
       },
       {
-        Component: Profile,
+        Component: UserProfile,
         path: "profile",
       },
     ],
@@ -155,20 +194,8 @@ export const router = createBrowserRouter([
         Component: AgentTransactions,
         path: "transaction-history",
       },
-      // {
-      //   Component: WithdrawMoney,
-      //   path: "withdraw-money",
-      // },
-      // {
-      //   Component: SendMoney,
-      //   path: "send-money",
-      // },
-      // {
-      //   Component: TransactionHistory,
-      //   path: "transaction-history",
-      // },
       {
-        Component: Profile,
+        Component: AgentProfile,
         path: "profile",
       },
     ],

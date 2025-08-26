@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
 
-const Profile = () => {
+const UserProfile = () => {
   const [name, setName] = useState("Md Irfan Chowdhury");
   const [phone, setPhone] = useState("018XXXXXXXX");
   const [password, setPassword] = useState("");
@@ -79,4 +79,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default UserProfile;

@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
 
-const AgentProfile = () => {
+const AdminProfile = () => {
   const [name, setName] = useState("Md Irfan Chowdhury");
   const [phone, setPhone] = useState("018XXXXXXXX");
   const [password, setPassword] = useState("");
@@ -79,4 +79,4 @@ const AgentProfile = () => {
   );
 };
 
-export default AgentProfile;
+export default AdminProfile;
