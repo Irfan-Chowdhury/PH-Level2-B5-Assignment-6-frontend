@@ -108,13 +108,13 @@ export const router = createBrowserRouter([
     Component: UserLayout,
     path: "/user",
     children: [
-      {
-        Component: UserOverview,
-        path: "dashboard",
-      },
       { 
         index: true, 
         element: <Navigate to="/user/dashboard" /> 
+      },
+      {
+        Component: UserOverview,
+        path: "dashboard",
       },
       {
         Component: DepositMoney,
@@ -142,6 +142,10 @@ export const router = createBrowserRouter([
     Component: AgentLayout,
     path: "/agent",
     children: [
+      { 
+        index: true, 
+        element: <Navigate to="/agent/dashboard" /> 
+      },
       {
         Component: AgentOverview,
         path: "dashboard",

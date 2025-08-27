@@ -48,8 +48,14 @@ export function LoginForm({
       if (res.data) {
         localStorage.setItem("user", JSON.stringify(res.data.user));
 
+        if (res.data.user.role == 'ADMIN') {
+          navigate("/admin");
+        }
         if (res.data.user.role == 'USER') {
           navigate("/user");
+        }
+        if (res.data.user.role == 'AGENT') {
+          navigate("/agent");
         }
       }
 

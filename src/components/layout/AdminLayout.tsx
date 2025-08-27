@@ -16,7 +16,6 @@ const AdminLayout = () => {
       <div className="flex-1 flex flex-col">
         <Navbar />
         <main className="flex-1 overflow-y-auto p-6">
-            {/* Nested user routes here */}
             <Outlet/> 
         </main>
         <Footer />

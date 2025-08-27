@@ -70,6 +70,8 @@ npm run dev
 ---
 
 
+
+
 <br>
 
 ## ⚙️ Key Features Implemented
@@ -93,6 +95,25 @@ npm run dev
 ---
 
 <br>
+
+## Credentials
+
+### Admin
+    
+    Email : admin123@gmail.com
+    Password: admin123
+    
+### User
+    
+    Email : user123@gmail.com
+    Password: user123
+    
+    
+### Agent
+    
+    Email : agent123@gmail.com
+    Password: agent123
+    
 
 <!-- ## 📡 API Endpoints Summary
 
