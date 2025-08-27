@@ -3,12 +3,10 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-
   "scripts": {
     "dev": "vite",
-    "build": "npm install --force && tsc",    
-    "lint": "npx eslint ./src",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build": "tsc"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
@@ -24,6 +22,9 @@
     "@radix-ui/react-tooltip": "^1.2.7",
     "@reduxjs/toolkit": "^2.8.2",
     "@tailwindcss/vite": "^4.1.11",
+    "@types/node": "^24.1.0",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
     "axios": "^1.11.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -47,9 +48,7 @@
     "zod": "^4.0.14"
   },
   "devDependencies": {
-    "@types/node": "^24.1.0",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
+    "@types/express": "^5.0.3",
     "@typescript-eslint/eslint-plugin": "^7.13.1",
     "@typescript-eslint/parser": "^7.13.1",
     "@vitejs/plugin-react": "^4.3.1",

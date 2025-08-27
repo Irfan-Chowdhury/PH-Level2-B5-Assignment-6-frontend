@@ -14,6 +14,7 @@ import { useLoginMutation } from "@/redux/features/auth/auth.api";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
 export function LoginForm({
   className,
@@ -39,11 +40,15 @@ export function LoginForm({
     } catch (err) {
       console.error(err);
 
-      if (err.data.message === "Password does not match") {
+      const error = err as FetchBaseQueryError & {
+        data?: { message?: string };
+      };
+
+      if (error.data?.message === "Password does not match") {
         toast.error("Invalid credentials");
       }
 
-      if (err.data.message === "User is not verified") {
+      if (error.data?.message === "User is not verified") {
         toast.error("Your account is not verified");
         navigate("/verify", { state: data.email });
       }

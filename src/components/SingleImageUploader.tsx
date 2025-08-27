@@ -3,7 +3,8 @@ import { AlertCircleIcon, ImageUpIcon, XIcon } from "lucide-react";
 import { useFileUpload } from "@/hooks/use-file-upload";
 import { useEffect } from "react";
 
-export default function SingleImageUploader({ onChange }) {
+// export default function SingleImageUploader({ onChange }) {
+export default function SingleImageUploader() {
   const maxSizeMB = 5;
   const maxSize = maxSizeMB * 1024 * 1024; // 5MB default
 
@@ -25,13 +26,13 @@ export default function SingleImageUploader({ onChange }) {
 
   console.log("Inside image uploader", files);
 
-  useEffect(() => {
-    if (files.length > 0) {
-      onChange(files[0].file);
-    } else {
-      onChange(null);
-    }
-  }, [files]);
+  // useEffect(() => {
+  //   if (files.length > 0) {
+  //     onChange(files[0].file);
+  //   } else {
+  //     onChange(null);
+  //   }
+  // }, [files]);
 
   const previewUrl = files[0]?.preview || null;
 

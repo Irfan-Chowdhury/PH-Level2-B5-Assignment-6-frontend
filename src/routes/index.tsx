@@ -1,23 +1,15 @@
 import App from "@/App";
-import DashboardLayout from "@/components/layout/DashboardLayout";
 import About from "@/pages/About";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import Verify from "@/pages/Verify";
-import { generateRoutes } from "@/utils/generateRoutes";
 import { createBrowserRouter, Navigate } from "react-router";
-import { adminSidebarItems } from "./adminSidebarItems";
-import { userSidebarItems } from "./userSidebarItems";
 import { withAuth } from "@/utils/withAuth";
 import Unauthorized from "@/pages/Unauthorized";
-import { role } from "@/constants/role";
-import { TRole } from "@/types";
 import Tours from "@/pages/Tours";
 import TourDetails from "@/pages/TourDetails";
 import Booking from "@/pages/Booking";
 import Homepage from "@/pages/Homepage";
-import Success from "@/pages/Payment/Success";
-import Fail from "@/pages/Payment/Fail";
 import Features from "@/pages/Features";
 import Pricing from "@/pages/Pricing";
 import Contact from "@/pages/Contact";
@@ -28,7 +20,6 @@ import DepositMoney from "@/pages/Dashboard/User/DepositMoney";
 import WithdrawMoney from "@/pages/Dashboard/User/WithdrawMoney";
 import SendMoney from "@/pages/Dashboard/User/SendMoney";
 import TransactionHistory from "@/pages/Dashboard/User/TransactionHistory";
-import Profile from "@/pages/Dashboard/User/Profile";
 import AgentOverview from "@/pages/Dashboard/Agent/AgentOverview";
 import AgentLayout from "@/components/layout/AgentLayout";
 import AgentAddMoney from "@/pages/Dashboard/Agent/AgentAddMoney";
@@ -87,29 +78,6 @@ export const router = createBrowserRouter([
       },
     ],
   },
-  // {
-  //   // Component: withAuth(DashboardLayout, role.superAdmin as TRole),
-  //   Component: DashboardLayout,
-  //   path: "/admin",
-  //   children: [
-  //     { 
-  //       index: true, 
-  //       element: <Navigate to="/admin/analytics" /> 
-  //     },
-  //     ...generateRoutes(adminSidebarItems),
-  //   ],
-  // },
-  // {
-  //   Component: withAuth(DashboardLayout, role.user as TRole),
-  //   path: "/user",
-  //   children: [
-  //     { 
-  //       index: true, 
-  //       element: <Navigate to="/user/bookings" /> 
-  //     },
-  //     ...generateRoutes(userSidebarItems),
-  //   ],
-  // },
   {
     Component: AdminLayout,
     path: "/admin",
@@ -148,10 +116,6 @@ export const router = createBrowserRouter([
     Component: UserLayout,
     path: "/user",
     children: [
-      // { 
-      //   index: true, 
-      //   element: <Navigate to="/user/bookings" /> 
-      // },
       {
         Component: UserOverview,
         path: "dashboard",
@@ -219,13 +183,5 @@ export const router = createBrowserRouter([
   {
     Component: Unauthorized,
     path: "/unauthorized",
-  },
-  {
-    Component: Success,
-    path: "/payment/success",
-  },
-  {
-    Component: Fail,
-    path: "/payment/fail",
-  },
+  }
 ]);

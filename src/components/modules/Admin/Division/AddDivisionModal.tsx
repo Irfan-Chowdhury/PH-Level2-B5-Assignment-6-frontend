@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import SingleImageUploader from "@/components/SingleImageUploader";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,41 +20,43 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import AddDivision from "../../../../pages/Admin/AddDivision";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { useAddDivisionMutation } from "@/redux/features/division/division.api";
 import { toast } from "sonner";
+
+type DivisionFormValues = {
+  name: string;
+  description: string;
+};
 
 export function AddDivisionModal() {
   const [open, setOpen] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const [addDivision] = useAddDivisionMutation();
 
-  console.log("Inside add division modal", image);
-
-  const form = useForm({
+  const form = useForm<DivisionFormValues>({
     defaultValues: {
       name: "",
       description: "",
     },
   });
 
-  const onSubmit = async (data) => {
+  const onSubmit: SubmitHandler<DivisionFormValues> = async (data) => {
     const formData = new FormData();
-
     formData.append("data", JSON.stringify(data));
-    formData.append("file", image as File);
-
-    // console.log(formData.get("data"));
-    // console.log(formData.get("file"));
+    if (image) {
+      formData.append("file", image);
+    }
 
     try {
       const res = await addDivision(formData).unwrap();
       toast.success("Division Added");
       setOpen(false);
+      form.reset();
+      setImage(null);
     } catch (err) {
       console.error(err);
+      toast.error("Failed to add division");
     }
   };
 
@@ -79,7 +82,7 @@ export function AddDivisionModal() {
                 <FormItem>
                   <FormLabel>Division Type</FormLabel>
                   <FormControl>
-                    <Input placeholder="Tour Type Name" {...field} />
+                    <Input placeholder="Division Name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -100,7 +103,6 @@ export function AddDivisionModal() {
             />
           </form>
 
-          <SingleImageUploader onChange={setImage} />
         </Form>
 
         <DialogFooter>
