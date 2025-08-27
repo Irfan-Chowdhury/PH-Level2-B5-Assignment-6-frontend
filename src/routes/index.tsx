@@ -34,6 +34,8 @@ import ListingPage from "@/pages/Dashboard/Admin/ListingPage";
 import AdminProfile from "@/pages/Dashboard/Admin/Profile";
 import UserProfile from "@/pages/Dashboard/User/Profile";
 import AgentProfile from "@/pages/Dashboard/Agent/Profile";
+import { role } from "@/constants/role";
+import { TRole } from "@/types";
 
 export const router = createBrowserRouter([
   {
@@ -66,6 +68,7 @@ export const router = createBrowserRouter([
       },
     ],
   },
+
   {
     Component: AdminLayout,
     path: "/admin",
@@ -100,6 +103,7 @@ export const router = createBrowserRouter([
       },
     ],
   },
+
   {
     Component: UserLayout,
     path: "/user",
@@ -107,6 +111,10 @@ export const router = createBrowserRouter([
       {
         Component: UserOverview,
         path: "dashboard",
+      },
+      { 
+        index: true, 
+        element: <Navigate to="/user/dashboard" /> 
       },
       {
         Component: DepositMoney,
