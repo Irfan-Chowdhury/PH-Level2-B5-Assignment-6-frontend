@@ -173,3 +173,16 @@ export const router = createBrowserRouter([
     path: "/unauthorized",
   }
 ]);
+
+
+
+
+
+// Backend : 
+// Repository : https://github.com/Irfan-Chowdhury/PH-Level2-B5-Assignment-5
+// Live Link : https://digital-wallet-api-blush.vercel.app
+
+
+// Frontend : 
+// Repository : https://github.com/Irfan-Chowdhury/PH-Level2-B5-Assignment-6-frontend
+// Live Link : digital-wallet-frontend-chi.vercel.app

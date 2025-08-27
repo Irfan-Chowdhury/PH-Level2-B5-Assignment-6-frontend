@@ -17,6 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Password from "@/components/ui/Password";
 import { useRegisterMutation } from "@/redux/features/auth/auth.api";
 import { toast } from "sonner";
+import { registerUser } from "../../../services/userService";
 
 const registerSchema = z
   .object({
@@ -27,14 +28,17 @@ const registerSchema = z
       })
       .max(50),
     email: z.email(),
+    role: z.string().min(3, { error: "Role is required" }),
+    phone: z.string().min(10, { error: "Phone at least 10 digit" }),
+    address: z.string().min(3, { error: "Address is too short" }),
     password: z.string().min(8, { error: "Password is too short" }),
-    confirmPassword: z
+    password_confirmation: z
       .string()
       .min(8, { error: "Confirm Password is too short" }),
   })
-  .refine((data) => data.password === data.confirmPassword, {
+  .refine((data) => data.password === data.password_confirmation, {
     message: "Password do not match",
-    path: ["confirmPassword"],
+    path: ["password_confirmation"],
   });
 
 export function RegisterForm({
@@ -49,25 +53,72 @@ export function RegisterForm({
     defaultValues: {
       name: "",
       email: "",
+      role: "",
+      phone: "",
+      address: "",
       password: "",
-      confirmPassword: "",
+      password_confirmation: "",
     },
   });
 
+  // const onSubmit = async (data: z.infer<typeof registerSchema>) => {
+  //   const userInfo = {
+  //     name: data.name,
+  //     email: data.email,
+  //     role: data.role,
+  //     phone: data.phone,
+  //     address: data.address,
+  //     password: data.password,
+  //   };
+
+  //   try {
+  //     await register(userInfo).unwrap();
+
+  //     toast.success("User created successfully");
+  //     navigate("/verify");
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
+
   const onSubmit = async (data: z.infer<typeof registerSchema>) => {
-    const userInfo = {
-      name: data.name,
-      email: data.email,
-      password: data.password,
-    };
+    
+      const userInfo = {
+        name: data.name,
+        email: data.email,
+        role: data.role,
+        phone: data.phone,
+        address: data.address,
+        password: data.password,
+        password_confirmation: data.password,
+      };
+
+      console.log("before send request data:", userInfo);
 
     try {
-      await register(userInfo).unwrap();
+      const response = await registerUser(userInfo);
+      console.log("API call successful, response data:", response);
 
       toast.success("User created successfully");
-      navigate("/verify");
-    } catch (error) {
-      console.error(error);
+      form.reset();
+
+      // navigate("/verify"); // redirect after successful registration
+    } catch (error: any) {
+      const errors = error.response?.data?.errors;
+      if (errors) {
+        // Loop through each field's error array and display all messages
+        Object.values(errors).forEach((fieldErrors: any) => {
+          fieldErrors.forEach((message: string) => {
+            toast.error(message);
+          });
+        });
+      } else {
+        toast.error(error.response?.data?.message || "Registration failed");
+      }
+
+      // console.error(error.response?.data?.errors);
+      // toast.error(error.response?.data?.errors || "Registration failed");
     }
   };
 
@@ -83,6 +134,7 @@ export function RegisterForm({
       <div className="grid gap-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            
             <FormField
               control={form.control}
               name="name"
@@ -99,6 +151,7 @@ export function RegisterForm({
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="email"
@@ -119,6 +172,71 @@ export function RegisterForm({
                 </FormItem>
               )}
             />
+
+            {/* Role Selection */}
+            <FormField
+              control={form.control}
+              name="role"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Role</FormLabel>
+                  <FormControl>
+                    <div className="flex gap-4">
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          value="USER"
+                          checked={field.value === "USER"}
+                          onChange={() => field.onChange("USER")}
+                        />
+                        User
+                      </label>
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          value="AGENT"
+                          checked={field.value === "AGENT"}
+                          onChange={() => field.onChange("AGENT")}
+                        />
+                        Agent
+                      </label>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Phone */}
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Phone</FormLabel>
+                  <FormControl>
+                    <Input placeholder="+8801XXXXXXXXX" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Address */}
+            <FormField
+              control={form.control}
+              name="address"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Address</FormLabel>
+                  <FormControl>
+                    <Input placeholder="City, Street, ZIP" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="password"
@@ -137,7 +255,7 @@ export function RegisterForm({
             />
             <FormField
               control={form.control}
-              name="confirmPassword"
+              name="password_confirmation"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
@@ -157,19 +275,19 @@ export function RegisterForm({
           </form>
         </Form>
 
-        <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
+        {/* <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
           <span className="relative z-10 bg-background px-2 text-muted-foreground">
             Or continue with
           </span>
-        </div>
+        </div> */}
 
-        <Button
+        {/* <Button
           type="button"
           variant="outline"
           className="w-full cursor-pointer"
         >
           Login with Google
-        </Button>
+        </Button> */}
       </div>
 
       <div className="text-center text-sm">
