@@ -1,25 +1,71 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import axios from "axios";
+import rootApi from "../../../redux/rootAPI";
+import { toggleUserStatus } from "../../../services/userService";
 
-// Mock users
-const mockUsers = [
-  { id: 1, name: "Irfan Chowdhury", phone: "018XXXXXXX", email: "irfan@example.com", status: "active" },
-  { id: 2, name: "John Doe", phone: "017XXXXXXX", email: "john@example.com", status: "blocked" },
-  { id: 3, name: "Jane Smith", phone: "019XXXXXXX", email: "jane@example.com", status: "active" },
-  { id: 4, name: "Ali Hasan", phone: "016XXXXXXX", email: "ali@example.com", status: "active" },
-  { id: 5, name: "Sara Khan", phone: "015XXXXXXX", email: "sara@example.com", status: "blocked" },
-];
+
+
+type User = {
+  id: number;
+  name: string;
+  phone: string;
+  email: string;
+  isActive: boolean;
+};
+
+// const mockUsers = [];
+
 
 const AdminManageUsers = () => {
-  const [users, setUsers] = useState(mockUsers);
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const itemsPerPage = 3;
+
+
+  // 🔹 Fetch users from API
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const token = localStorage.getItem("dw_token");
+
+      try {
+        const response = await rootApi.get("/user/all-users",
+          {
+            withCredentials: true,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setUsers(response.data.data);
+
+      } catch (error: any) {
+        console.log("Error:", error);
+
+        if (error.response?.status === 403) {
+          toast.error("You don't have permission to access this resource");
+        } else if (error.response?.status === 401) {
+          toast.error("Unauthorized, please log in again");
+        } else {
+          toast.error("Failed to load users");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+
 
   const filteredUsers = users.filter((u) =>
     u.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -30,19 +76,27 @@ const AdminManageUsers = () => {
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
   const paginatedUsers = filteredUsers.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
-  const toggleStatus = (id: number) => {
-    setUsers((prev) =>
-      prev.map((u) =>
-        u.id === id
-          ? { ...u, status: u.status === "active" ? "blocked" : "active" }
-          : u
-      )
-    );
-    const updatedUser = users.find((u) => u.id === id);
-    toast.success(
-      `${updatedUser?.name} is now ${updatedUser?.status === "active" ? "blocked" : "active"}`
-    );
+
+  const toggleStatus = async (id: number) => {
+    try {
+      // Call backend
+      const updatedUser = await toggleUserStatus(id);
+
+      // Update state
+      setUsers((prev) =>
+        prev.map((user) =>
+          user.id === id ? updatedUser : user
+        )
+      );
+
+      toast.success(
+        `${updatedUser.name} is now ${updatedUser.isActive ? "active" : "blocked"}`
+      );
+    } catch (error) {
+      toast.error("Failed to update status");
+    }
   };
+
 
   return (
     <motion.div
@@ -65,36 +119,42 @@ const AdminManageUsers = () => {
             />
           </div>
 
-          {/* Users Table */}
+
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>ID</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead>Phone</TableHead>
                 <TableHead>Email</TableHead>
+                <TableHead>Phone</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paginatedUsers.length > 0 ? (
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-4">
+                    Loading users...
+                  </TableCell>
+                </TableRow>
+              ) : paginatedUsers.length > 0 ? (
                 paginatedUsers.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell>{user.id}</TableCell>
                     <TableCell>{user.name}</TableCell>
-                    <TableCell>{user.phone}</TableCell>
                     <TableCell>{user.email}</TableCell>
-                    <TableCell className={user.status === "active" ? "text-green-600" : "text-red-600"}>
-                      {user.status.toUpperCase()}
+                    <TableCell>{user.phone}</TableCell>
+                    <TableCell className={user.isActive ? "text-green-600" : "text-red-600"}>
+                      {user.isActive ? "Active" : "Blocked"}
                     </TableCell>
                     <TableCell>
                       <Button
-                        variant={user.status === "active" ? "destructive" : "default"}
+                        variant={user.isActive ? "destructive" : "default"}
                         size="sm"
                         onClick={() => toggleStatus(user.id)}
                       >
-                        {user.status === "active" ? "Block" : "Unblock"}
+                        {user.isActive ? "Block" : "Unblock"}
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -108,6 +168,8 @@ const AdminManageUsers = () => {
               )}
             </TableBody>
           </Table>
+
+
 
           {/* Pagination */}
           <div className="flex justify-center items-center gap-4 mt-4">

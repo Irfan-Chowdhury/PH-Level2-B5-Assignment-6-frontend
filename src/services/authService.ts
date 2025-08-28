@@ -16,15 +16,22 @@ export const loginUser = async (credentials: { email: string; password: string }
 
 
 export const logoutUser = async () => {
-    await axios.get(`${config.baseUrl}/sanctum/csrf-cookie`, {
-      withCredentials: true,
-    });
-
-  // Step 2: Logout request
-  const response = await rootApi.post("/auth/logout", null, {
+  
+  await axios.get(`${config.baseUrl}/sanctum/csrf-cookie`, {
     withCredentials: true,
   });
 
+  const token = localStorage.getItem("dw_token");
+  if (!token) {
+    throw new Error("No token found");
+  }
+
+  let response = await axios.post(`${config.baseUrl}/api/v1/auth/logout`, {}, {
+    withCredentials: true,
+    headers: {
+        Authorization: `Bearer ${token}`,
+      },
+  });
 
   return response.data;
 };

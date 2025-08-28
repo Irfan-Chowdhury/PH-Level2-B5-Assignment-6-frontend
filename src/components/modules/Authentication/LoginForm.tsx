@@ -36,25 +36,27 @@ export function LoginForm({
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     try {      
-      const res = await loginUser(data);
+      const response = await loginUser(data);
 
-      console.log(res.data);
+      console.log(response);
 
       toast.success("Logged in successfully");
 
       form.reset();
 
       // ✅ Save user info or token if backend returns it
-      if (res.data) {
-        localStorage.setItem("user", JSON.stringify(res.data.user));
+      if (response.data) {
+        // localStorage.setItem("dw_token", JSON.stringify(response.data.token));
+        localStorage.setItem("dw_token", response.data.token);
+        localStorage.setItem("dw_user", JSON.stringify(response.data.user));
 
-        if (res.data.user.role == 'ADMIN') {
+        if (response.data.user.role == 'ADMIN') {
           navigate("/admin");
         }
-        if (res.data.user.role == 'USER') {
+        if (response.data.user.role == 'USER') {
           navigate("/user");
         }
-        if (res.data.user.role == 'AGENT') {
+        if (response.data.user.role == 'AGENT') {
           navigate("/agent");
         }
       }
@@ -66,6 +68,7 @@ export function LoginForm({
 
     } catch (error: any) {
       console.log(error);
+      // console.log(error.response.status);
       toast.error(error.response?.data?.message || "Invalid credentials");
     }
   };

@@ -1,5 +1,6 @@
 import rootApi from "../redux/rootAPI";
-
+import axios from "axios";
+import config from "../config";
 
 export const registerUser = async (userInfo: {
   name: string;
@@ -12,4 +13,26 @@ export const registerUser = async (userInfo: {
 }) => {
   const response = await rootApi.post("/user/register", userInfo);
   return response.data;
+};
+
+
+export const toggleUserStatus = async (id: number) => {
+  // const response = await rootApi.patch(`/user/${id}/status`);
+
+  // return response.data.data; // return updated user
+
+
+  const token = localStorage.getItem("dw_token");
+  if (!token) {
+    throw new Error("No token found");
+  }
+
+  const response = await rootApi.patch(`/user/${id}/status`, {}, {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data.data;
 };
