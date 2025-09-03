@@ -36,6 +36,7 @@ import UserProfile from "@/pages/Dashboard/User/Profile";
 import AgentProfile from "@/pages/Dashboard/Agent/Profile";
 import { role } from "@/constants/role";
 import { TRole } from "@/types";
+import ProtectedRoute from "../utils/ProtectedRoute";
 
 export const router = createBrowserRouter([
   {
@@ -70,38 +71,45 @@ export const router = createBrowserRouter([
   },
 
   {
-    Component: AdminLayout,
-    path: "/admin",
+    // Component: ProtectedRoute,
+    Component: ProtectedRoute,
+    handle: { allowedRoles: ["ADMIN"] },
     children: [
-      { 
-        index: true, 
-        element: <Navigate to="/admin/dashboard" /> 
-      },
       {
-        Component: AdminOverview,
-        path: "dashboard",
-      },
-      {
-        Component: AdminManageUsers,
-        path: "manage-users",
-      },
-      {
-        Component: AdminManageAgents,
-        path: "manage-agents",
-      },
-      {
-        Component: AdminTransactions,
-        path: "transactions",
-      },
-      {
-        Component: ListingPage,
-        path: "listing",
-      },
-      {
-        Component: AdminProfile,
-        path: "profile",
-      },
-    ],
+        Component: AdminLayout,
+        path: "/admin",
+        children: [
+          { 
+            index: true, 
+            element: <Navigate to="/admin/dashboard" /> 
+          },
+          {
+            Component: AdminOverview,
+            path: "dashboard",
+          },
+          {
+            Component: AdminManageUsers,
+            path: "manage-users",
+          },
+          {
+            Component: AdminManageAgents,
+            path: "manage-agents",
+          },
+          {
+            Component: AdminTransactions,
+            path: "transactions",
+          },
+          {
+            Component: ListingPage,
+            path: "listing",
+          },
+          {
+            Component: AdminProfile,
+            path: "profile",
+          },
+        ],
+      }
+    ]
   },
 
   {

@@ -16,7 +16,7 @@ export const registerUser = async (userInfo: {
 };
 
 
-export const toggleUserStatus = async (id: number) => {
+export const toggleUserOrAgentStatus = async (id: number) => {
   // const response = await rootApi.patch(`/user/${id}/status`);
 
   // return response.data.data; // return updated user

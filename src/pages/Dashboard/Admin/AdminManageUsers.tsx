@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 import axios from "axios";
 import rootApi from "../../../redux/rootAPI";
-import { toggleUserStatus } from "../../../services/userService";
+import { toggleUserOrAgentStatus } from "../../../services/userService";
 
 
 
@@ -80,7 +80,7 @@ const AdminManageUsers = () => {
   const toggleStatus = async (id: number) => {
     try {
       // Call backend
-      const updatedUser = await toggleUserStatus(id);
+      const updatedUser = await toggleUserOrAgentStatus(id);
 
       // Update state
       setUsers((prev) =>

@@ -1,42 +1,94 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import rootApi from "../../../redux/rootAPI";
+import { toggleUserOrAgentStatus } from "../../../services/userService";
 
-// Mock agents
-const mockAgents = [
-  { id: 1, name: "Agent A", phone: "018XXXXXXX", email: "agentA@example.com", status: "pending" },
-  { id: 2, name: "Agent B", phone: "017XXXXXXX", email: "agentB@example.com", status: "approved" },
-  { id: 3, name: "Agent C", phone: "019XXXXXXX", email: "agentC@example.com", status: "suspended" },
-  { id: 4, name: "Agent D", phone: "016XXXXXXX", email: "agentD@example.com", status: "approved" },
-  { id: 5, name: "Agent E", phone: "015XXXXXXX", email: "agentE@example.com", status: "pending" },
-];
+type Agent = {
+  id: number;
+  name: string;
+  phone: string;
+  email: string;
+  isActive: boolean;
+};
+
 
 const AdminManageAgents = () => {
-  const [agents, setAgents] = useState(mockAgents);
+  const [agents, setAgents] = useState<Agent[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const itemsPerPage = 3;
 
-  const filteredAgents = agents.filter((a) =>
-    a.name.toLowerCase().includes(search.toLowerCase()) ||
-    a.phone.includes(search) ||
-    a.email.toLowerCase().includes(search.toLowerCase())
+  // 🔹 Fetch users from API
+  useEffect(() => {
+    const fetchAgents = async () => {
+      const token = localStorage.getItem("dw_token");
+
+      try {
+        const response = await rootApi.get("/agents",
+          {
+            withCredentials: true,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setAgents(response.data.data);
+
+      } catch (error: any) {
+        console.log("Error:", error);
+
+        if (error.response?.status === 403) {
+          toast.error("You don't have permission to access this resource");
+        } else if (error.response?.status === 401) {
+          toast.error("Unauthorized, please log in again");
+        } else {
+          toast.error("Failed to load users");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAgents();
+  }, []);
+
+  const filteredUsers = agents.filter((u) =>
+    u.name.toLowerCase().includes(search.toLowerCase()) ||
+    u.phone.includes(search) ||
+    u.email.toLowerCase().includes(search.toLowerCase())
   );
 
-  const totalPages = Math.ceil(filteredAgents.length / itemsPerPage);
-  const paginatedAgents = filteredAgents.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+  const paginatedAgents = filteredUsers.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
-  const updateStatus = (id: number, newStatus: string) => {
-    setAgents((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, status: newStatus } : a))
-    );
-    const updatedAgent = agents.find((a) => a.id === id);
-    toast.success(`${updatedAgent?.name} is now ${newStatus.toUpperCase()}`);
+  const toggleStatus = async (id: number) => {
+    try {
+      // Call backend
+      const updatedUser = await toggleUserOrAgentStatus(id);
+
+      // Update state
+      setAgents((prev) =>
+        prev.map((user) =>
+          user.id === id ? updatedUser : user
+        )
+      );
+
+      toast.success(
+        `${updatedUser.name} is now ${updatedUser.isActive ? "active" : "blocked"}`
+      );
+    } catch (error) {
+      toast.error("Failed to update status");
+    }
   };
+  
+  
 
   return (
     <motion.div
@@ -59,8 +111,8 @@ const AdminManageAgents = () => {
             />
           </div>
 
-          {/* Agents Table */}
-          <Table>
+         {/* Agents Table */}
+         <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>ID</TableHead>
@@ -72,43 +124,31 @@ const AdminManageAgents = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paginatedAgents.length > 0 ? (
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-4">
+                    Loading agents...
+                  </TableCell>
+                </TableRow>
+              ) : paginatedAgents.length > 0 ? (
                 paginatedAgents.map((agent) => (
                   <TableRow key={agent.id}>
                     <TableCell>{agent.id}</TableCell>
                     <TableCell>{agent.name}</TableCell>
                     <TableCell>{agent.phone}</TableCell>
                     <TableCell>{agent.email}</TableCell>
-                    <TableCell
-                      className={
-                        agent.status === "approved"
-                          ? "text-green-600"
-                          : agent.status === "suspended"
-                          ? "text-red-600"
-                          : "text-yellow-600"
-                      }
-                    >
-                      {agent.status.toUpperCase()}
+                    <TableCell className={agent.isActive ? "text-green-600" : "text-red-600"}>
+                      {agent.isActive ? "Active" : "Blocked"}
                     </TableCell>
-                    <TableCell className="flex gap-2">
-                      {agent.status !== "approved" && (
-                        <Button
-                          size="sm"
-                          variant="default"
-                          onClick={() => updateStatus(agent.id, "approved")}
-                        >
-                          Approve
-                        </Button>
-                      )}
-                      {agent.status !== "suspended" && (
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => updateStatus(agent.id, "suspended")}
-                        >
-                          Suspend
-                        </Button>
-                      )}
+
+                    <TableCell>
+                      <Button
+                        variant={agent.isActive ? "destructive" : "default"}
+                        size="sm"
+                        onClick={() => toggleStatus(agent.id)}
+                      >
+                        {agent.isActive ? "Block" : "Unblock"}
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))
