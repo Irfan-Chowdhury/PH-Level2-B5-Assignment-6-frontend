@@ -6,6 +6,68 @@ import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { walletSendMoney } from "../../../services/walleteService";
+import { useSendMoneyMutation } from "../../../redux/walletApi";
+
+
+// type WalletSend = {
+//   receiver_phone: string;
+//   amount: number;
+//   pin: string;
+// };
+
+
+
+// const SendMoney = () => {
+
+//   const [formData, setFormData] = useState<WalletSend>({
+//     receiver_phone: "",
+//     amount: 0,
+//     pin: "",
+//   });
+
+//   const [loading, setLoading] = useState(false);
+//   const [message, setMessage] = useState("");
+
+//   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     const { name, value, type } = e.target;
+  
+//     setFormData(prev => ({
+//       ...prev,
+//       [name]: type === "number" ? Number(value) : value,
+//     }));
+//   };
+
+//   const handleSubmit = async (e: React.FormEvent) => {
+//     e.preventDefault(); // prevent page reload
+  
+//     const formInfo = {
+//       receiver_phone: formData.receiver_phone,
+//       amount: formData.amount,
+//       pin: formData.pin,
+//     };
+  
+//     try {
+//       const response = await walletSendMoney(formInfo);
+//       console.log("API call successful, response data:", response);
+  
+//       toast.success(response.message);
+  
+//       setFormData({ receiver_phone: "", amount: 0, pin: "" });
+//     } catch (error: any) {
+//       const errors = error.response?.data?.errors;
+//       if (errors) {
+//         Object.values(errors).forEach((fieldErrors: any) => {
+//           fieldErrors.forEach((message: string) => {
+//             toast.error(message);
+//           });
+//         });
+//       } else {
+//         toast.error(error.response?.data?.message || "Error");
+//       }
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
 
 
 type WalletSend = {
@@ -14,10 +76,7 @@ type WalletSend = {
   pin: string;
 };
 
-
-
 const SendMoney = () => {
-
   const [formData, setFormData] = useState<WalletSend>({
     receiver_phone: "",
     amount: 0,
@@ -27,46 +86,39 @@ const SendMoney = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
+
+  const [sendMoney, { isLoading }] = useSendMoneyMutation();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
-  
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: type === "number" ? Number(value) : value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // prevent page reload
-  
-    const formInfo = {
-      receiver_phone: formData.receiver_phone,
-      amount: formData.amount,
-      pin: formData.pin,
-    };
-  
+    e.preventDefault();
+
     try {
-      const response = await walletSendMoney(formInfo);
-      console.log("API call successful, response data:", response);
-  
-      toast.success(response.message);
-  
+      const response = await sendMoney(formData).unwrap(); // unwrap => clean data or throw error
+      console.log("API call successful:", response);
+
+      toast.success(response.message || "Money sent successfully");
+
       setFormData({ receiver_phone: "", amount: 0, pin: "" });
     } catch (error: any) {
-      const errors = error.response?.data?.errors;
+      const errors = error.data?.errors;
       if (errors) {
         Object.values(errors).forEach((fieldErrors: any) => {
-          fieldErrors.forEach((message: string) => {
-            toast.error(message);
-          });
+          fieldErrors.forEach((msg: string) => toast.error(msg));
         });
       } else {
-        toast.error(error.response?.data?.message || "Error");
+        toast.error(error.data?.message || "Error");
       }
-    } finally {
-      setLoading(false);
     }
   };
+
 
 
 
@@ -127,8 +179,11 @@ const SendMoney = () => {
             </div>
 
             {/* Submit */}
-            <Button type="submit" className="w-full" disabled={loading}>
+            {/* <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Processing..." : "Send Money"}
+            </Button> */}
+            <Button type="submit" className="w-full">
+              Send Money
             </Button>
           </form>
 
