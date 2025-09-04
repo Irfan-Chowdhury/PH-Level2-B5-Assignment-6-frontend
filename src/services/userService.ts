@@ -11,6 +11,11 @@ export const registerUser = async (userInfo: {
   password: string;
   password_confirmation: string;
 }) => {
+  
+  await axios.get(`${config.baseUrl}/sanctum/csrf-cookie`, {
+    withCredentials: true,
+  });
+
   const response = await rootApi.post("/user/register", userInfo);
   return response.data;
 };

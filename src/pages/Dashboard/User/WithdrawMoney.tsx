@@ -4,11 +4,23 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
+import { withdrawBalance } from "../../../services/walleteService";
+
+
+type WalletWithdraw = {
+  to: string;
+  amount: number;
+  pin: string;
+};
+
 
 const WithdrawMoney = () => {
-  const [formData, setFormData] = useState({
-    agentNumber: "",
-    amount: "",
+
+
+  const [formData, setFormData] = useState<WalletWithdraw>({
+    to: "",
+    amount: 0,
     pin: "",
   });
 
@@ -16,23 +28,47 @@ const WithdrawMoney = () => {
   const [message, setMessage] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const { name, value, type } = e.target;
+  
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === "number" ? Number(value) : value,
+    }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
-
-    // Simulate API call
-    setTimeout(() => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault(); // prevent page reload
+  
+    const formInfo = {
+      to: formData.to,
+      amount: formData.amount,
+      pin: formData.pin,
+    };
+  
+    try {
+      const response = await withdrawBalance(formInfo);
+      console.log("API call successful, response data:", response);
+  
+      toast.success("Money deposited successfully");
+  
+      setFormData({ to: "", amount: 0, pin: "" });
+    } catch (error: any) {
+      const errors = error.response?.data?.errors;
+      if (errors) {
+        Object.values(errors).forEach((fieldErrors: any) => {
+          fieldErrors.forEach((message: string) => {
+            toast.error(message);
+          });
+        });
+      } else {
+        toast.error(error.response?.data?.message || "Error");
+      }
+    } finally {
       setLoading(false);
-      setMessage(
-        `✅ Successfully withdrawn ৳${formData.amount} via Agent ${formData.agentNumber}`
-      );
-      setFormData({ agentNumber: "", amount: "", pin: "" });
-    }, 1500);
+    }
   };
+
+
 
   return (
     <motion.div
@@ -50,13 +86,13 @@ const WithdrawMoney = () => {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Agent Number */}
             <div>
-              <Label htmlFor="agentNumber" className="my-2">Agent Number</Label>
+              <Label htmlFor="agentNumber" className="my-2">Send To</Label>
               <Input
-                id="agentNumber"
-                name="agentNumber"
+                id="to"
+                name="to"
                 type="text"
-                placeholder="Enter agent number"
-                value={formData.agentNumber}
+                placeholder="e.g : Bank, ATM etc."
+                value={formData.to}
                 onChange={handleChange}
                 required
               />

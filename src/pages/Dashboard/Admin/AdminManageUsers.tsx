@@ -10,7 +10,6 @@ import rootApi from "../../../redux/rootAPI";
 import { toggleUserOrAgentStatus } from "../../../services/userService";
 
 
-
 type User = {
   id: number;
   name: string;

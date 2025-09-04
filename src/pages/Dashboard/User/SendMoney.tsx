@@ -4,11 +4,23 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
+import { walletSendMoney } from "../../../services/walleteService";
+
+
+type WalletSend = {
+  receiver_phone: string;
+  amount: number;
+  pin: string;
+};
+
+
 
 const SendMoney = () => {
-  const [formData, setFormData] = useState({
-    recipient: "",
-    amount: "",
+
+  const [formData, setFormData] = useState<WalletSend>({
+    receiver_phone: "",
+    amount: 0,
     pin: "",
   });
 
@@ -16,23 +28,47 @@ const SendMoney = () => {
   const [message, setMessage] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value, type } = e.target;
+  
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === "number" ? Number(value) : value,
+    }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
-
-    // Simulated API call
-    setTimeout(() => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault(); // prevent page reload
+  
+    const formInfo = {
+      receiver_phone: formData.receiver_phone,
+      amount: formData.amount,
+      pin: formData.pin,
+    };
+  
+    try {
+      const response = await walletSendMoney(formInfo);
+      console.log("API call successful, response data:", response);
+  
+      toast.success(response.message);
+  
+      setFormData({ receiver_phone: "", amount: 0, pin: "" });
+    } catch (error: any) {
+      const errors = error.response?.data?.errors;
+      if (errors) {
+        Object.values(errors).forEach((fieldErrors: any) => {
+          fieldErrors.forEach((message: string) => {
+            toast.error(message);
+          });
+        });
+      } else {
+        toast.error(error.response?.data?.message || "Error");
+      }
+    } finally {
       setLoading(false);
-      setMessage(
-        `✅ Sent ৳${formData.amount} successfully to ${formData.recipient}`
-      );
-      setFormData({ recipient: "", amount: "", pin: "" });
-    }, 1500);
+    }
   };
+
+
 
   return (
     <motion.div
@@ -50,15 +86,15 @@ const SendMoney = () => {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Recipient */}
             <div>
-              <Label htmlFor="recipient" className="my-2">Recipient (Phone or Email)</Label>
+              <Label htmlFor="recipient" className="my-2">Recipient (Phone)</Label>
               <Input
                 id="recipient"
-                name="recipient"
+                name="receiver_phone"
                 type="text"
                 placeholder="Enter phone or email"
-                value={formData.recipient}
+                value={formData.receiver_phone}
                 onChange={handleChange}
-                required
+                
               />
             </div>
 

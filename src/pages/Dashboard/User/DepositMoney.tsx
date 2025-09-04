@@ -4,33 +4,74 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
+import { Form } from "@/components/ui/form";
+import { depositMoney } from "../../../services/walleteService";
+import { toast } from "sonner";
+import { number } from "zod";
+
+type Wallet = {
+  from: string;
+  amount: number;
+  pin: string;
+};
+
 
 const DepositMoney = () => {
-  const [formData, setFormData] = useState({
-    agentNumber: "",
-    amount: "",
-    pin: "",
-  });
 
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+const [formData, setFormData] = useState<Wallet>({
+  from: "",
+  amount: 0,
+  pin: "",
+});
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+const [loading, setLoading] = useState(false);
+
+const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const { name, value, type } = e.target;
+
+  setFormData(prev => ({
+    ...prev,
+    [name]: type === "number" ? Number(value) : value,
+  }));
+};
+
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault(); // prevent page reload
+
+  const formInfo = {
+    from: formData.from,
+    amount: formData.amount,
+    pin: formData.pin,
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
+  try {
+    const response = await depositMoney(formInfo);
+    console.log("API call successful, response data:", response);
 
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false);
-      setMessage(`✅ Successfully deposited ৳${formData.amount} via Agent ${formData.agentNumber}`);
-      setFormData({ agentNumber: "", amount: "", pin: "" });
-    }, 1500);
-  };
+    toast.success("Money deposited successfully");
+
+    // reset form state
+    setFormData({ from: "", amount: 0, pin: "" });
+  } catch (error: any) {
+    const errors = error.response?.data?.errors;
+    if (errors) {
+      // Loop through each field's error array and display all messages
+      Object.values(errors).forEach((fieldErrors: any) => {
+        fieldErrors.forEach((message: string) => {
+          toast.error(message);
+        });
+      });
+    } else {
+      toast.error(error.response?.data?.message || "Registration failed");
+    }
+
+    // console.error(error.response?.data?.errors);
+    // toast.error(error.response?.data?.errors || "Registration failed");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <motion.div
@@ -46,17 +87,18 @@ const DepositMoney = () => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-5">
+
             {/* Agent Number */}
             <div>
-              <Label htmlFor="agentNumber">Agent Number</Label>
+              <Label htmlFor="sourceFrom">Source From</Label>
               <Input
-                id="agentNumber"
-                name="agentNumber"
+                id="from"
+                name="from"
                 type="text"
-                placeholder="Enter agent number"
-                value={formData.agentNumber}
-                onChange={handleChange}
+                placeholder="e.g : External Source, Bank or Others"
+                value={formData.from}
                 required
+                onChange={handleChange}
               />
             </div>
 
@@ -95,7 +137,7 @@ const DepositMoney = () => {
           </form>
 
           {/* Success Message */}
-          {message && (
+          {/* {message && (
             <motion.p
               className="mt-4 text-center text-green-600 font-medium"
               initial={{ opacity: 0 }}
@@ -103,7 +145,7 @@ const DepositMoney = () => {
             >
               {message}
             </motion.p>
-          )}
+          )} */}
         </CardContent>
       </Card>
     </motion.div>

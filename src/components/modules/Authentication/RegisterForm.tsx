@@ -61,26 +61,6 @@ export function RegisterForm({
     },
   });
 
-  // const onSubmit = async (data: z.infer<typeof registerSchema>) => {
-  //   const userInfo = {
-  //     name: data.name,
-  //     email: data.email,
-  //     role: data.role,
-  //     phone: data.phone,
-  //     address: data.address,
-  //     password: data.password,
-  //   };
-
-  //   try {
-  //     await register(userInfo).unwrap();
-
-  //     toast.success("User created successfully");
-  //     navigate("/verify");
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
 
   const onSubmit = async (data: z.infer<typeof registerSchema>) => {
     
