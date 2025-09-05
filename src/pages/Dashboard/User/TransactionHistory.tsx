@@ -1,47 +1,96 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
+import rootApi from "../../../redux/rootAPI";
 
 type Transaction = {
   id: number;
-  type: "Deposit" | "Withdraw" | "Send" | "Receive";
+  // type: "Deposit" | "Withdraw" | "Send" | "Receive";
+  type: "deposit" | "withdraw" | "send-money" | "receive";
   amount: number;
-  date: string;
-  recipient?: string;
+  createdAt: string;
+  recipient?: string | { phone: string }; // union type
 };
 
 const mockTransactions: Transaction[] = [
-  { id: 1, type: "Deposit", amount: 2000, date: "2025-08-01" },
-  { id: 2, type: "Send", amount: 500, date: "2025-08-02", recipient: "018XXXXXXXX" },
-  { id: 3, type: "Withdraw", amount: 1000, date: "2025-08-03" },
-  { id: 4, type: "Receive", amount: 700, date: "2025-08-05", recipient: "019XXXXXXXX" },
-  { id: 5, type: "Deposit", amount: 1500, date: "2025-08-06" },
-  { id: 6, type: "Send", amount: 800, date: "2025-08-08", recipient: "017XXXXXXXX" },
+  { id: 1, type: "deposit", amount: 2000, createdAt: "2025-08-01" },
+  { id: 2, type: "send-money", amount: 500, createdAt: "2025-08-02", recipient: "018XXXXXXXX" },
+  { id: 3, type: "withdraw", amount: 1000, createdAt: "2025-08-03" },
+  { id: 4, type: "receive", amount: 700, createdAt: "2025-08-05", recipient: "019XXXXXXXX" },
+  { id: 5, type: "deposit", amount: 1500, createdAt: "2025-08-06" },
+  { id: 6, type: "send-money", amount: 800, createdAt: "2025-08-08", recipient: "017XXXXXXXX" },
 ];
 
 const TransactionHistory = () => {
+  const [users, setUsers] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+
   const [typeFilter, setTypeFilter] = useState<string>("All");
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [page, setPage] = useState<number>(1);
-  const pageSize = 3;
+  const pageSize = 10;
+
+    // 🔹 Fetch users from API
+    useEffect(() => {
+      const fetchUsers = async () => {
+        const token = localStorage.getItem("dw_token");
+  
+        try {
+          const response = await rootApi.get("/transaction/my-transactions",
+            {
+              withCredentials: true,
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          // return console.log(response);
+  
+          setUsers(response.data.data);
+  
+        } catch (error: any) {
+          console.log("Error:", error);
+  
+          if (error.response?.status === 403) {
+            toast.error("You don't have permission to access this resource");
+          } else if (error.response?.status === 401) {
+            toast.error("Unauthorized, please log in again");
+          } else {
+            toast.error("Failed to load users");
+          }
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchUsers();
+    }, []);
+  
+
+
+
 
   // Filtering
-  const filtered = mockTransactions.filter((t) => {
+  // Page size fixed to 5 rows per page
+  const filtered = users.filter((t) => {
     const matchesType = typeFilter === "All" || t.type === typeFilter;
     const matchesDate =
-      (!startDate || new Date(t.date) >= new Date(startDate)) &&
-      (!endDate || new Date(t.date) <= new Date(endDate));
+      (!startDate || new Date(t.createdAt) >= new Date(startDate)) &&
+      (!endDate || new Date(t.createdAt) <= new Date(endDate));
     return matchesType && matchesDate;
   });
 
   // Pagination
   const totalPages = Math.ceil(filtered.length / pageSize);
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
+
 
   return (
     <motion.div
@@ -66,10 +115,10 @@ const TransactionHistory = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="All">All</SelectItem>
-                  <SelectItem value="Deposit">Deposit</SelectItem>
-                  <SelectItem value="Withdraw">Withdraw</SelectItem>
-                  <SelectItem value="Send">Send</SelectItem>
-                  <SelectItem value="Receive">Receive</SelectItem>
+                  <SelectItem value="deposit">Deposit</SelectItem>
+                  <SelectItem value="withdraw">Withdraw</SelectItem>
+                  <SelectItem value="send-money">Send</SelectItem>
+                  <SelectItem value="receive">Receive</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -110,8 +159,13 @@ const TransactionHistory = () => {
                       <td className="p-3">{t.id}</td>
                       <td className="p-3">{t.type}</td>
                       <td className="p-3">৳{t.amount}</td>
-                      <td className="p-3">{t.date}</td>
-                      <td className="p-3">{t.recipient || "-"}</td>
+                      <td className="p-3">{t.createdAt}</td>
+                      {/* <td className="p-3">{t.recipient || "-"}</td> */}
+                      <td className="p-3">
+                        {typeof t.recipient === "object"
+                          ? t.recipient?.phone || "-"
+                          : t.recipient || "-"}
+                      </td>
                     </tr>
                   ))
                 ) : (
