@@ -19,17 +19,23 @@
 
 
 
-
+import { profileApi } from "./profileApi";
 import { walletApi } from "./walletApi";
 import { configureStore } from "@reduxjs/toolkit";
+import { dashboardApi } from "./dashboardApi";
 
 export const store = configureStore({
   reducer: {
     // এখানে সব slice যোগ হবে
     [walletApi.reducerPath]: walletApi.reducer, // আমাদের walletApi reducer
+    [profileApi.reducerPath]: profileApi.reducer,
+    [dashboardApi.reducerPath]: dashboardApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(walletApi.middleware),
+    getDefaultMiddleware()
+   .concat(walletApi.middleware)
+   .concat(profileApi.middleware)  // add profileApi middleware
+   .concat(dashboardApi.middleware),
   // RTK Query middleware যোগ করতে হবে, যাতে API caching, polling, refetch কাজ করে
 });
 
