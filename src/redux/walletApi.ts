@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import config from "../config";
 
+// Send Money
 type SendMoneyRequest = {
   receiver_phone: string;
   amount: number;
@@ -11,6 +12,33 @@ type SendMoneyResponse = {
   message: string;
   balance?: number; // depends on backend response
 };
+
+
+// Cash In
+type WalletCashIn = {
+  receiver_phone: string;
+  amount: number;
+  pin: string;
+};
+
+type CashInResponse = {
+  message: string;
+  balance?: number;
+};
+
+// Cash Out
+type WalletCashout = {
+  user_phone: string;
+  amount: number;
+  pin: string;
+};
+
+type CashOutResponse = {
+  message: string;
+  balance?: number;
+};
+
+
 
 export const walletApi = createApi({
   reducerPath: "walletApi", // Redux store এ এই slice এর নাম হবে
@@ -36,12 +64,47 @@ export const walletApi = createApi({
         body: walletFormData,
       }),
     }),
+
+    cashIn: builder.mutation<CashInResponse, WalletCashIn>({
+      query: (cashInData) => ({
+        url: "/wallet/cash-in",
+        method: "POST",
+        body: cashInData,
+      }),
+    }),
+
+    cashOut: builder.mutation<CashOutResponse, WalletCashout>({
+      query: (cashOutData) => ({
+        url: "/wallet/cash-out",
+        method: "POST",
+        body: cashOutData,
+      }),
+    }),
     // depositMoney mutation can also live here
   }),
 });
 
 // RTK Query automatically একটা hook বানাবে
-export const { useSendMoneyMutation } = walletApi;
+export const { useSendMoneyMutation, useCashInMutation, useCashOutMutation } = walletApi;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /**

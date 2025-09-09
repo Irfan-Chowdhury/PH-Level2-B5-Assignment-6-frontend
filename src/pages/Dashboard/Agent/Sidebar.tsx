@@ -18,19 +18,19 @@ const Sidebar = () => {
         </Link>
 
         <Link
-          to="/agent/add-money"
+          to="/agent/cash-in"
           className="flex items-center space-x-3 hover:bg-emerald-600 p-2 rounded-lg"
         >
           <ArrowDown className="w-5 h-5" />
-          <span>Add Money</span>
+          <span>Cash In</span>
         </Link>
 
         <Link
-          to="/agent/withdraw-money"
+          to="/agent/cash-out"
           className="flex items-center space-x-3 hover:bg-emerald-600 p-2 rounded-lg"
         >
           <ArrowUp className="w-5 h-5" />
-          <span>Withdraw</span>
+          <span>Cash Out</span>
         </Link>
 
         <Link

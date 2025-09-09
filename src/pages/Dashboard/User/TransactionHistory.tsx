@@ -78,7 +78,6 @@ const TransactionHistory = () => {
 
 
   // Filtering
-  // Page size fixed to 5 rows per page
   const filtered = users.filter((t) => {
     const matchesType = typeFilter === "All" || t.type === typeFilter;
     const matchesDate =

@@ -22,8 +22,8 @@ import SendMoney from "@/pages/Dashboard/User/SendMoney";
 import TransactionHistory from "@/pages/Dashboard/User/TransactionHistory";
 import AgentOverview from "@/pages/Dashboard/Agent/AgentOverview";
 import AgentLayout from "@/components/layout/AgentLayout";
-import AgentAddMoney from "@/pages/Dashboard/Agent/AgentAddMoney";
-import AgentWithdrawMoney from "@/pages/Dashboard/Agent/AgentWithdrawMoney";
+import AgentCashIn from "@/pages/Dashboard/Agent/AgentCashIn";
+import AgentCashOut from "@/pages/Dashboard/Agent/AgentCashOut";
 import AgentTransactions from "@/pages/Dashboard/Agent/AgentTransactions";
 import AdminOverview from "@/pages/Dashboard/Admin/AdminOverview";
 import AdminLayout from "@/components/layout/AdminLayout";
@@ -159,12 +159,12 @@ export const router = createBrowserRouter([
         path: "dashboard",
       },
       {
-        Component: AgentAddMoney,
-        path: "add-money",
+        Component: AgentCashIn,
+        path: "cash-in",
       },
       {
-        Component: AgentWithdrawMoney,
-        path: "withdraw-money",
+        Component: AgentCashOut,
+        path: "cash-out",
       },
       {
         Component: AgentTransactions,

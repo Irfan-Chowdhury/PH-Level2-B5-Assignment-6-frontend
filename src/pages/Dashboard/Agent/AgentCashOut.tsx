@@ -1,24 +1,23 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { walletSendMoney } from "../../../services/walleteService";
-import { useSendMoneyMutation } from "../../../redux/walletApi";
+import { motion } from "framer-motion";
+import { useCashOutMutation } from "../../../redux/walletApi";
 
-
-type WalletSend = {
-  receiver_phone: string;
+type WalletCashIn = {
+  user_phone: string;
   amount: number;
   pin: string;
 };
 
-const SendMoney = () => {
-  const [formData, setFormData] = useState<WalletSend>({
-    receiver_phone: "",
-    amount: 0,
+
+const AgentCashOut = () => {
+  const [formData, setFormData] = useState<WalletCashIn>({
+    user_phone: "",
+    amount: "",
     pin: "",
   });
 
@@ -26,13 +25,14 @@ const SendMoney = () => {
   const [message, setMessage] = useState("");
 
 
-  const [sendMoney, { isLoading }] = useSendMoneyMutation();
+  const [cashIn, { isLoading }] = useCashOutMutation();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "number" ? Number(value) : value,
+      [name]: value
+      // [name]: type === "number" ? Number(value) : value,
     }));
   };
 
@@ -40,12 +40,12 @@ const SendMoney = () => {
     e.preventDefault();
 
     try {
-      const response = await sendMoney(formData).unwrap(); // unwrap => clean data or throw error
+      const response = await cashIn(formData).unwrap(); // unwrap => clean data or throw error
       console.log("API call successful:", response);
 
-      toast.success(response.message || "Money sent successfully");
+      toast.success(response.message || "Cash Out successfully");
 
-      setFormData({ receiver_phone: "", amount: 0, pin: "" });
+      setFormData({ user_phone: "", amount: 0, pin: "" });
     } catch (error: any) {
       const errors = error.data?.errors;
       if (errors) {
@@ -59,8 +59,6 @@ const SendMoney = () => {
   };
 
 
-
-
   return (
     <motion.div
       className="p-6"
@@ -70,20 +68,20 @@ const SendMoney = () => {
       <Card className="max-w-lg mx-auto shadow-xl rounded-2xl">
         <CardHeader>
           <CardTitle className="text-center text-2xl font-bold text-blue-600">
-            Send Money
+            Cash Out
           </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Recipient */}
             <div>
-              <Label htmlFor="recipient" className="my-2">Recipient (Phone)</Label>
+              <Label htmlFor="recipient" className="my-2">User Phone</Label>
               <Input
                 id="recipient"
-                name="receiver_phone"
+                name="user_phone"
                 type="text"
-                placeholder="Enter phone or email"
-                value={formData.receiver_phone}
+                placeholder="Enter phone"
+                value={formData.user_phone}
                 onChange={handleChange}
                 
               />
@@ -118,9 +116,16 @@ const SendMoney = () => {
             </div>
 
        
-            <Button type="submit" className="w-full">
-              Send Money
-            </Button>
+            {/* <Button type="submit" className="w-full">
+              Cash In
+            </Button> */}
+            <button
+              onClick={handleChange}
+              disabled={isLoading}
+              className="bg-indigo-600 text-white px-4 py-2 rounded"
+              >
+              {isLoading ? "Processing..." : "Cash In"}
+            </button>
           </form>
 
           {/* Success Message */}
@@ -139,4 +144,4 @@ const SendMoney = () => {
   );
 };
 
-export default SendMoney;
+export default AgentCashOut;
