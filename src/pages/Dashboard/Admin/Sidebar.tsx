@@ -34,14 +34,6 @@ const Sidebar = () => {
         </Link>
 
         <Link
-          to="/admin/withdraw-money"
-          className="flex items-center space-x-3 hover:bg-gray-800 p-2 rounded-lg"
-        >
-          <ArrowUp className="w-5 h-5" />
-          <span>Withdraw</span>
-        </Link>
-
-        <Link
           to="/admin/transactions"
           className="flex items-center space-x-3 hover:bg-gray-800 p-2 rounded-lg"
         >

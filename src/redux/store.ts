@@ -1,28 +1,9 @@
-// import { configureStore } from "@reduxjs/toolkit";
-// import { baseApi } from "./baseApi";
-// import { setupListeners } from "@reduxjs/toolkit/query";
-
-// export const store = configureStore({
-//   reducer: {
-//     [baseApi.reducerPath]: baseApi.reducer,
-//   },
-//   middleware: (getDefaultMiddleware) =>
-//     getDefaultMiddleware().concat(baseApi.middleware),
-// });
-
-// setupListeners(store.dispatch);
-
-// // Infer the `RootState` and `AppDispatch` types from the store itself
-// export type RootState = ReturnType<typeof store.getState>;
-// // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
-// export type AppDispatch = typeof store.dispatch;
-
-
 
 import { profileApi } from "./profileApi";
 import { walletApi } from "./walletApi";
 import { configureStore } from "@reduxjs/toolkit";
 import { dashboardApi } from "./dashboardApi";
+import { adminApi } from "./adminApi";
 
 export const store = configureStore({
   reducer: {
@@ -30,12 +11,14 @@ export const store = configureStore({
     [walletApi.reducerPath]: walletApi.reducer, // আমাদের walletApi reducer
     [profileApi.reducerPath]: profileApi.reducer,
     [dashboardApi.reducerPath]: dashboardApi.reducer,
+    [adminApi.reducerPath]: adminApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
    .concat(walletApi.middleware)
    .concat(profileApi.middleware)  // add profileApi middleware
-   .concat(dashboardApi.middleware),
+   .concat(dashboardApi.middleware)
+   .concat(adminApi.middleware),
   // RTK Query middleware যোগ করতে হবে, যাতে API caching, polling, refetch কাজ করে
 });
 
