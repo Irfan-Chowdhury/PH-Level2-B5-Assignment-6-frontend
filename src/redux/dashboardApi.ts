@@ -2,18 +2,24 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import config from "../config";
 
-export type DashboardData = {
+export type userDashboardData = {
   walletRemainingBalance: string;
   deposit: string;
   withdraw: string;
   sendMoney: string;
 };
 
+export type agentDashboardData = {
+  walletRemainingBalance: number;
+  cashIn: number;
+  cashOut: number;
+};
+
 export type DashboardResponse = {
   statusCode: number;
   success: boolean;
   message: string;
-  data: DashboardData;
+  data: userDashboardData | agentDashboardData;
 };
 
 export const dashboardApi = createApi({
@@ -27,10 +33,13 @@ export const dashboardApi = createApi({
     },
   }),
   endpoints: (builder) => ({
-    getDashboard: builder.query<DashboardResponse, void>({
+    getUserDashboard: builder.query<DashboardResponse, void>({
       query: () => "/user/dashboard",
+    }),
+    getAgentDashboard: builder.query<DashboardResponse, void>({
+      query: () => "/agent/dashboard",
     }),
   }),
 });
 
-export const { useGetDashboardQuery } = dashboardApi;
+export const { useGetUserDashboardQuery, useGetAgentDashboardQuery } = dashboardApi;

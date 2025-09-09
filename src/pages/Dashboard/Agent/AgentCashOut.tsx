@@ -124,7 +124,7 @@ const AgentCashOut = () => {
               disabled={isLoading}
               className="bg-indigo-600 text-white px-4 py-2 rounded"
               >
-              {isLoading ? "Processing..." : "Cash In"}
+              {isLoading ? "Processing..." : "Cash Out"}
             </button>
           </form>
 
