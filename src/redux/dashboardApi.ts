@@ -15,11 +15,18 @@ export type agentDashboardData = {
   cashOut: number;
 };
 
+export type adminDashboardData = {
+  totalUsers: number;
+  totalAgents: number;
+  totalTransactions:number;
+  totalVolume:number;
+};
+
 export type DashboardResponse = {
   statusCode: number;
   success: boolean;
   message: string;
-  data: userDashboardData | agentDashboardData;
+  data: userDashboardData | agentDashboardData | adminDashboardData;
 };
 
 export const dashboardApi = createApi({
@@ -39,7 +46,10 @@ export const dashboardApi = createApi({
     getAgentDashboard: builder.query<DashboardResponse, void>({
       query: () => "/agent/dashboard",
     }),
+    getAdminDashboard: builder.query<DashboardResponse, void>({
+      query: () => "/admin/dashboard",
+    }),
   }),
 });
 
-export const { useGetUserDashboardQuery, useGetAgentDashboardQuery } = dashboardApi;
+export const { useGetUserDashboardQuery, useGetAgentDashboardQuery, useGetAdminDashboardQuery } = dashboardApi;

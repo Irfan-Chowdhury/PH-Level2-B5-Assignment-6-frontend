@@ -1,16 +1,28 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, LineChart, Line, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
+import { useGetAdminDashboardQuery } from "../../../redux/dashboardApi";
 
 const COLORS = ["#4ade80", "#60a5fa"];
 
 const AdminOverview = () => {
+
+  const { data, isLoading, isError } = useGetAdminDashboardQuery();
+  
+  if (isLoading) return <p>Loading dashboard...</p>;
+  if (isError) return <p>Failed to load dashboard</p>;
+
+  const dashboard = data?.data;
+
+
+
   // Mock data (replace with API later)
   const stats = {
-    totalUsers: 1200,
-    totalAgents: 50,
-    totalTransactions: 3400,
-    totalVolume: 1250000, // in BDT
+    // totalUsers: 1200,
+    totalUsers: dashboard.totalUsers,
+    totalAgents: dashboard.totalAgents,
+    totalTransactions: dashboard.totalTransactions,
+    totalVolume: dashboard.totalVolume, // in BDT
   };
 
   const userAgentData = [
