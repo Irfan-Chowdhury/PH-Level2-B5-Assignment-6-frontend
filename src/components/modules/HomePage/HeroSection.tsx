@@ -44,7 +44,7 @@ export default function HeroSection() {
               transition={{ duration: 0.7 }}
               className="text-4xl md:text-6xl font-extrabold mb-6"
             >
-              The Future of Digital Wallets
+              The Upcoming Future of Digital Wallets
             </motion.h1>
             <p className="text-lg md:text-xl mb-8 max-w-2xl">
               Secure, fast, and user-friendly. Manage your money anytime, anywhere with DigiWallet.

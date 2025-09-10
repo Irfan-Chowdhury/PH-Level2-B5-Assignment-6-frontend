@@ -4,6 +4,7 @@ import { walletApi } from "./walletApi";
 import { configureStore } from "@reduxjs/toolkit";
 import { dashboardApi } from "./dashboardApi";
 import { adminApi } from "./adminApi";
+import { baseApi } from "./baseApi";
 
 export const store = configureStore({
   reducer: {
@@ -12,12 +13,14 @@ export const store = configureStore({
     [profileApi.reducerPath]: profileApi.reducer,
     [dashboardApi.reducerPath]: dashboardApi.reducer,
     [adminApi.reducerPath]: adminApi.reducer,
+    [baseApi.reducerPath]: baseApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
    .concat(walletApi.middleware)
    .concat(profileApi.middleware)  // add profileApi middleware
    .concat(dashboardApi.middleware)
+   .concat(baseApi.middleware)
    .concat(adminApi.middleware),
   // RTK Query middleware যোগ করতে হবে, যাতে API caching, polling, refetch কাজ করে
 });
