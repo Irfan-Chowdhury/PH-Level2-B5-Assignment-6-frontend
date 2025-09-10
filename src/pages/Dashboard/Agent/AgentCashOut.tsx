@@ -9,10 +9,15 @@ import { useCashOutMutation } from "../../../redux/walletApi";
 
 type WalletCashIn = {
   user_phone: string;
-  amount: number;
+  amount: string;
   pin: string;
 };
 
+type WalletCashInPayload = {
+  user_phone: string;
+  amount: number; // number for API
+  pin: string;
+};
 
 const AgentCashOut = () => {
   const [formData, setFormData] = useState<WalletCashIn>({
@@ -40,12 +45,17 @@ const AgentCashOut = () => {
     e.preventDefault();
 
     try {
-      const response = await cashIn(formData).unwrap(); // unwrap => clean data or throw error
+      const payload: WalletCashInPayload = {
+        ...formData,
+        amount: Number(formData.amount),
+      };
+      
+      const response = await cashIn(payload).unwrap(); // unwrap => clean data or throw error
       console.log("API call successful:", response);
 
       toast.success(response.message || "Cash Out successfully");
 
-      setFormData({ user_phone: "", amount: 0, pin: "" });
+      setFormData({ user_phone: "", amount: "", pin: "" });
     } catch (error: any) {
       const errors = error.data?.errors;
       if (errors) {
@@ -119,12 +129,19 @@ const AgentCashOut = () => {
             {/* <Button type="submit" className="w-full">
               Cash In
             </Button> */}
-            <button
+            {/* <button
               onClick={handleChange}
               disabled={isLoading}
               className="bg-indigo-600 text-white px-4 py-2 rounded"
               >
               {isLoading ? "Processing..." : "Cash Out"}
+            </button> */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="bg-indigo-600 text-white px-4 py-2 rounded"
+            >
+              {isLoading ? "Processing..." : "Cash In"}
             </button>
           </form>
 

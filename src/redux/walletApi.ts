@@ -27,7 +27,7 @@ type CashInResponse = {
 };
 
 // Cash Out
-type WalletCashout = {
+type WalletCashOut = {
   user_phone: string;
   amount: number;
   pin: string;
@@ -73,7 +73,7 @@ export const walletApi = createApi({
       }),
     }),
 
-    cashOut: builder.mutation<CashOutResponse, WalletCashout>({
+    cashOut: builder.mutation<CashOutResponse, WalletCashOut>({
       query: (cashOutData) => ({
         url: "/wallet/cash-out",
         method: "POST",

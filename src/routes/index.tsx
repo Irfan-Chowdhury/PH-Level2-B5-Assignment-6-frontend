@@ -71,7 +71,6 @@ export const router = createBrowserRouter([
   },
 
   {
-    // Component: ProtectedRoute,
     Component: ProtectedRoute,
     handle: { allowedRoles: ["ADMIN"] },
     children: [

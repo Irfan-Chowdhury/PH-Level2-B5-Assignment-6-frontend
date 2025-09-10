@@ -2,6 +2,18 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import config from "../config";
 
+
+// Agent Dashboard
+type Transaction = {
+  id: number;
+  type: "cash-in" | "cash-out"; // or string if you want
+  userPhone: string;
+  amount: number;
+  created_at: string;
+};
+
+
+// User Dashboard
 export type userDashboardData = {
   walletRemainingBalance: string;
   deposit: string;
@@ -9,12 +21,15 @@ export type userDashboardData = {
   sendMoney: string;
 };
 
+
 export type agentDashboardData = {
   walletRemainingBalance: number;
   cashIn: number;
   cashOut: number;
+  transactions: Transaction[];
 };
 
+// Admin Dashboard
 export type adminDashboardData = {
   totalUsers: number;
   totalAgents: number;

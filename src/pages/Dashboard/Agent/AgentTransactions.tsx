@@ -15,7 +15,8 @@ type Transaction = {
   type: "cash-in" | "cash-out";
   amount: number;
   createdAt: string;
-  user?: string | { phone: string }; // union type
+  // user?: string | { phone: string }; // union type
+  recipient?: string | { phone: string }; // union type
 };
 
 
@@ -158,7 +159,6 @@ const AgentTransactions = () => {
                       <td className="p-3">{t.id}</td>
                       <td className="p-3">{t.type}</td>
                       <td className="p-3">৳{t.amount}</td>
-                      {/* <td className="p-3">{t.recipient || "-"}</td> */}
                       <td className="p-3">
                         {typeof t.recipient === "object"
                           ? t.recipient?.phone || "-"

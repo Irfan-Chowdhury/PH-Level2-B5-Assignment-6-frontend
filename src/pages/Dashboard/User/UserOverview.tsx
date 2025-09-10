@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import { ArrowDownLeft, ArrowUpRight, Send } from "lucide-react";
-import { useGetUserDashboardQuery } from "../../../redux/dashboardApi";
+import { useGetUserDashboardQuery, userDashboardData } from "../../../redux/dashboardApi";
 
 const UserOverview = () => {
   const { data, isLoading, isError } = useGetUserDashboardQuery();
@@ -8,7 +8,11 @@ const UserOverview = () => {
   if (isLoading) return <p>Loading dashboard...</p>;
   if (isError) return <p>Failed to load dashboard</p>;
 
-  const dashboard = data?.data;
+  // const dashboard = data?.data;
+  const dashboard = data?.data as userDashboardData | undefined;
+
+  if (!dashboard) return <p>No dashboard data available</p>;
+
 
   return (
     <div className="space-y-8">

@@ -10,14 +10,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useLoginMutation } from "@/redux/features/auth/auth.api";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
-import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
 import { loginUser } from "@/services/authService";
-import config from "../../../config";
 
+interface LoginFormData {
+  email: string;
+  password: string;
+}
 
 export function LoginForm({
   className,
@@ -26,94 +28,47 @@ export function LoginForm({
   const navigate = useNavigate();
   const [login, { isLoading }] = useLoginMutation();
 
-  const form = useForm({
+  // ✅ Type the form with LoginFormData
+  const form = useForm<LoginFormData>({
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-
-  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    try {      
-      const response = await loginUser(data);
-
-      console.log(response);
+  // ✅ Type onSubmit properly
+  const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
+    try {
+      const response = await loginUser(data); // ✅ data now matches the expected type
 
       toast.success("Logged in successfully");
-
       form.reset();
 
-      // ✅ Save user info or token if backend returns it
+      // Save token and user info
       if (response.data) {
-        // localStorage.setItem("dw_token", JSON.stringify(response.data.token));
         localStorage.setItem("dw_token", response.data.token);
         localStorage.setItem("dw_user", JSON.stringify(response.data.user));
 
-        if (response.data.user.role == 'ADMIN') {
-          navigate("/admin");
-        }
-        if (response.data.user.role == 'USER') {
-          navigate("/user");
-        }
-        if (response.data.user.role == 'AGENT') {
-          navigate("/agent");
+        // Navigate based on role
+        switch (response.data.user.role) {
+          case "ADMIN":
+            navigate("/admin");
+            break;
+          case "USER":
+            navigate("/user");
+            break;
+          case "AGENT":
+            navigate("/agent");
+            break;
+          default:
+            navigate("/"); // fallback
         }
       }
-
-      
-
-      // navigate("/");
-
-
     } catch (error: any) {
       console.log(error);
-      // console.log(error.response.status);
       toast.error(error.response?.data?.message || "Invalid credentials");
     }
   };
-
-  // const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-  //   try {
-  //     const res = await login(data).unwrap();
-
-  //     if (res?.success) {
-  //       // ✅ Show toast
-  //       toast.success("Logged in successfully");
-
-  //       // ✅ Store token / user data if backend sends
-  //       if (res.token) {
-  //         localStorage.setItem("accessToken", res.token);
-  //       }
-  //       if (res.user) {
-  //         localStorage.setItem("user", JSON.stringify(res.user));
-  //       }
-
-  //       // ✅ Reset form after success
-  //       form.reset();
-
-  //       // ✅ Redirect
-  //       navigate("/");
-  //     }
-  //   } catch (err) {
-  //     console.error("Login error:", err);
-
-  //     const error = err as FetchBaseQueryError & {
-  //       data?: { message?: string };
-  //     };
-
-  //     // More flexible error handling
-  //     const errorMessage =
-  //       error.data?.message ||
-  //       "Login failed. Please check your credentials and try again.";
-
-  //     toast.error(errorMessage);
-
-  //     if (errorMessage === "User is not verified") {
-  //       navigate("/verify", { state: data.email });
-  //     }
-  //   }
-  // };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>

@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowDownCircle, ArrowUpCircle, Activity } from "lucide-react";
 import { motion } from "framer-motion";
-import { useGetAgentDashboardQuery } from "../../../redux/dashboardApi";
+import { agentDashboardData, useGetAgentDashboardQuery } from "../../../redux/dashboardApi";
 
 const mockData = {
   cashIn: 125000,
@@ -21,8 +21,10 @@ const AgentOverview = () => {
   if (isLoading) return <p>Loading dashboard...</p>;
   if (isError) return <p>Failed to load dashboard</p>;
 
-  const dashboard = data?.data;
+  // const dashboard = data?.data;
+  const dashboard = data?.data as agentDashboardData | undefined;
 
+  if (!dashboard) return <p>No dashboard data available</p>;
 
   return (
     <motion.div
@@ -98,7 +100,8 @@ const AgentOverview = () => {
             act.type === "cash-in" ? "text-green-600" : "text-red-600"
           }`}
         >
-          ৳ {parseFloat(act.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+          ৳ {act.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+
         </p>
       </li>
     ))}

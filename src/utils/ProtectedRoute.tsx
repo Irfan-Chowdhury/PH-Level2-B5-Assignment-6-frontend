@@ -1,9 +1,7 @@
 // import { Outlet, Navigate } from "react-router";
 
 
-// interface ProtectedRouteProps {
-//   allowedRoles?: string[];
-// }
+
 
 
 // const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
@@ -26,15 +24,21 @@
 // export default ProtectedRoute;
 
 
-import { Navigate, Outlet, useMatches } from "react-router";
 
 // TypeScript: extend RouteObject to allow handle.allowedRoles
-declare module "react-router" {
-  interface RouteObject {
-    handle?: {
-      allowedRoles?: string[];
-    };
-  }
+// declare module "react-router" {
+//   interface RouteObject {
+//     handle?: {
+//       allowedRoles?: string[];
+//     };
+//   }
+// }
+
+import { Navigate, Outlet, useMatches } from "react-router";
+
+
+interface ProtectedRouteProps {
+  allowedRoles?: string[];
 }
 
 const ProtectedRoute = () => {
@@ -44,7 +48,8 @@ const ProtectedRoute = () => {
   // Get current route match
   const matches = useMatches();
   const currentMatch = matches[matches.length - 1]; // deepest route
-  const allowedRoles = currentMatch.handle?.allowedRoles;
+  // const allowedRoles = currentMatch.handle?.allowedRoles;
+  const allowedRoles = (currentMatch.handle as { allowedRoles?: string[] })?.allowedRoles;
 
   // Not logged in → redirect
   if (!token) {

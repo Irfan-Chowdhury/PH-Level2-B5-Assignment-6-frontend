@@ -9,7 +9,14 @@ import { useCashInMutation } from "../../../redux/walletApi";
 
 type WalletCashIn = {
   receiver_phone: string;
-  amount: number;
+  // amount: number|"";
+  amount: string;
+  pin: string;
+};
+
+type WalletCashInPayload = {
+  receiver_phone: string;
+  amount: number; // number for API
   pin: string;
 };
 
@@ -32,7 +39,6 @@ const AgentCashIn = () => {
     setFormData((prev) => ({
       ...prev,
       [name]: value
-      // [name]: type === "number" ? Number(value) : value,
     }));
   };
 
@@ -40,12 +46,18 @@ const AgentCashIn = () => {
     e.preventDefault();
 
     try {
-      const response = await cashIn(formData).unwrap(); // unwrap => clean data or throw error
+      const payload: WalletCashInPayload = {
+        ...formData,
+        amount: Number(formData.amount),
+      };
+
+      // const response = await cashIn(formData).unwrap(); // unwrap => clean data or throw error
+      const response = await cashIn(payload).unwrap(); // unwrap => clean data or throw error
       console.log("API call successful:", response);
 
       toast.success(response.message || "Cash In successfully");
 
-      setFormData({ receiver_phone: "", amount: 0, pin: "" });
+      setFormData({ receiver_phone: "", amount: "", pin: "" });
     } catch (error: any) {
       const errors = error.data?.errors;
       if (errors) {
@@ -119,13 +131,22 @@ const AgentCashIn = () => {
             {/* <Button type="submit" className="w-full">
               Cash In
             </Button> */}
-            <button
+            {/* <button
               onClick={handleChange}
               disabled={isLoading}
               className="bg-indigo-600 text-white px-4 py-2 rounded"
               >
               {isLoading ? "Processing..." : "Cash In"}
+            </button> */}
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="bg-indigo-600 text-white px-4 py-2 rounded"
+            >
+              {isLoading ? "Processing..." : "Cash In"}
             </button>
+            
           </form>
 
           {/* Success Message */}
