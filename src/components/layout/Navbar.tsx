@@ -32,17 +32,20 @@ export default function Navbar() {
                     <li><Link to="/faq" className="hover:text-indigo-600 transition">FAQ</Link></li>
                 </ul>
 
-                {data?.data?.email && (
-                    <Button onClick={handleLogout} variant="outline" className="text-sm">
-                        Logout
-                    </Button>
-                )}
+                <div className="flex items-center gap-2">
+                    <ModeToggle />
+                    {data?.data?.email && (
+                        <Button onClick={handleLogout} variant="outline" className="text-sm">
+                            Logout
+                        </Button>
+                    )}
 
-                {!data?.data?.email && (
-                    <Button asChild className="bg-indigo-600 text-white rounded-xl shadow-md hover:bg-indigo-700">
-                        <Link to="/login">Login</Link>
-                    </Button>
-                )}
+                    {!data?.data?.email && (
+                        <Button asChild className="bg-indigo-600 text-white rounded-xl shadow-md hover:bg-indigo-700">
+                            <Link to="/login">Login</Link>
+                        </Button>
+                    )}
+                </div>
                 </nav>
             </header>
         </>

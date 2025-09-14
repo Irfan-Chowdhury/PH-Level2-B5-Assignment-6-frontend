@@ -4,11 +4,11 @@ import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import Verify from "@/pages/Verify";
 import { createBrowserRouter, Navigate } from "react-router";
-import { withAuth } from "@/utils/withAuth";
+// import { withAuth } from "@/utils/withAuth";
 import Unauthorized from "@/pages/Unauthorized";
-import Tours from "@/pages/Tours";
-import TourDetails from "@/pages/TourDetails";
-import Booking from "@/pages/Booking";
+// import Tours from "@/pages/Tours";
+// import TourDetails from "@/pages/TourDetails";
+// import Booking from "@/pages/Booking";
 import Homepage from "@/pages/Homepage";
 import Features from "@/pages/Features";
 import Pricing from "@/pages/Pricing";
@@ -34,8 +34,8 @@ import ListingPage from "@/pages/Dashboard/Admin/ListingPage";
 import AdminProfile from "@/pages/Dashboard/Admin/Profile";
 import UserProfile from "@/pages/Dashboard/User/Profile";
 import AgentProfile from "@/pages/Dashboard/Agent/Profile";
-import { role } from "@/constants/role";
-import { TRole } from "@/types";
+// import { role } from "@/constants/role";
+// import { TRole } from "@/types";
 import ProtectedRoute from "../utils/ProtectedRoute";
 
 export const router = createBrowserRouter([
