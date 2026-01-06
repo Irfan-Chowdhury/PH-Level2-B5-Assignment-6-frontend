@@ -37,6 +37,8 @@ import AgentProfile from "@/pages/Dashboard/Agent/Profile";
 // import { role } from "@/constants/role";
 // import { TRole } from "@/types";
 import ProtectedRoute from "../utils/ProtectedRoute";
+import Privacy from "@/pages/Privacy";
+import Terms from "@/pages/Terms";
 
 export const router = createBrowserRouter([
   {
@@ -66,6 +68,14 @@ export const router = createBrowserRouter([
       {
         Component: FAQ,
         path: "faq",
+      },
+      {
+        Component: Privacy,
+        path: "privacy",
+      },
+      {
+        Component: Terms,
+        path: "terms",
       },
     ],
   },
